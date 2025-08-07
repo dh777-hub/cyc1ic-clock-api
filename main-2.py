@@ -15,12 +15,12 @@ def base_conversion(year):
         num_digits += 1
     for i in range(num_digits):
         digits.append(int(res))
-        res = (res-int(res))*12
+        res = (res - int(res)) * 12
     while 0 in digits[1:]:
-        for i in range(num_digits-1):
-            if digits[i+1] == 0:
+        for i in range(num_digits - 1):
+            if digits[i + 1] == 0:
                 digits[i] -= 1
-                digits[i+1] = 12
+                digits[i + 1] = 12
     if digits[0] == 0:
         digits.pop(0)
     return digits
@@ -29,9 +29,11 @@ def base_conversion(year):
 def get_clock_data():
     seconds_since_big_bang = Decimal('466576408532613321.5304043206646')
     reference_time = datetime.datetime(2020, 12, 31, 23, 59, 59)
-    input_time = datetime.datetime.now()
+    input_time = datetime.datetime.now(datetime.timezone.utc)
+
+    # שמירת זמן השרת בלוג
     with open("/tmp/server_time.log", "a") as f:
-    f.write(f"SERVER TIME: {input_time}\\n")
+        f.write(f"SERVER TIME: {input_time}\n")
 
     second_multiplier = Decimal(285738202.060366731702559) / Decimal(299792458)
 
