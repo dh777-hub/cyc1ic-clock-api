@@ -31,15 +31,12 @@ def get_clock_data():
     seconds_since_big_bang = Decimal('466576408532613321.5304043206646')
     reference_time = datetime.datetime(2020, 12, 31, 23, 59, 59, tzinfo=datetime.timezone.utc)
 
-    # הגדרה מדויקת של אזור זמן ישראל כולל שעון קיץ
     tz = pytz.timezone("Asia/Jerusalem")
     input_time = datetime.datetime.now(tz)
 
-    # כתיבת הלוג עם שעה מדויקת לישראל
     with open("/tmp/server_time.log", "a") as f:
         f.write(f"SERVER TIME (Asia/Jerusalem): {input_time}\n")
 
-    # מחשבים את הפרש הזמן מול UTC
     difference_in_seconds = (input_time.astimezone(datetime.timezone.utc) - reference_time).total_seconds()
     total_seconds = Decimal(difference_in_seconds) + seconds_since_big_bang
     new_total_seconds = total_seconds * Decimal(285738202.060366731702559) / Decimal(299792458)
