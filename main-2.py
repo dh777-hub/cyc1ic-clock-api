@@ -2,12 +2,9 @@ from flask import Flask, jsonify
 import datetime
 from decimal import *
 from fractions import Fraction
-from datetime import timezone, timedelta
 
 getcontext().prec = 100
 app = Flask(__name__)
-
-local_timezone = timezone(timedelta(hours=3))  # Israel Time (GMT+3)
 
 def base_conversion(year):
     res = Fraction(year)
@@ -31,11 +28,10 @@ def base_conversion(year):
 @app.route("/clock")
 def get_clock_data():
     seconds_since_big_bang = Decimal('466576408532613321.5304043206646')
-    reference_time = datetime.datetime(2020, 12, 31, 23, 59, 59, tzinfo=local_timezone)
-    input_time = datetime.datetime.now(local_timezone)
+    reference_time = datetime.datetime(2020, 12, 31, 23, 59, 59)  # לא כולל tzinfo
+    input_time = datetime.datetime.now()  # גם לא כולל tzinfo (כך אין טעות בהשוואה)
 
-    with open("/tmp/server_time.log", "a") as f:
-        f.write(f"SERVER TIME: {input_time}\n")
+    print(f"SERVER TIME: {input_time}")  # הדפסה לקונסולה במקום לקובץ
 
     second_multiplier = Decimal('285738202.060366731702559') / Decimal(299792458)
 
