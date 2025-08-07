@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 import datetime
 from decimal import *
 from fractions import Fraction
+import pytz  # <-- חשוב
 
 getcontext().prec = 100
 app = Flask(__name__)
@@ -30,17 +31,17 @@ def get_clock_data():
     seconds_since_big_bang = Decimal('466576408532613321.5304043206646')
     reference_time = datetime.datetime(2020, 12, 31, 23, 59, 59, tzinfo=datetime.timezone.utc)
 
-    # הגדרת אזור זמן ישראל
-    tz_israel = datetime.timezone(datetime.timedelta(hours=3))
-    input_time = datetime.datetime.now(tz=tz_israel)
+    # שימוש באזור זמן מדויק לישראל (כולל שעון קיץ)
+    tz_jerusalem = pytz.timezone("Asia/Jerusalem")
+    input_time = datetime.datetime.now(tz_jerusalem)
 
-    # כתיבת הזמן לקובץ זמני בלוג
+    # כתיבה ללוג
     with open("/tmp/server_time.log", "a") as f:
         f.write(f"SERVER TIME: {input_time}\n")
 
     second_multiplier = Decimal(285738202.060366731702559) / Decimal(299792458)
 
-    difference_in_seconds = (input_time - reference_time).total_seconds()
+    difference_in_seconds = (input_time.astimezone(datetime.timezone.utc) - reference_time).total_seconds()
     total_seconds = Decimal(difference_in_seconds) + seconds_since_big_bang
     new_total_seconds = total_seconds * second_multiplier
 
