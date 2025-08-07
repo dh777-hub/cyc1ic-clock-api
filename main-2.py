@@ -28,12 +28,17 @@ def base_conversion(year):
 @app.route("/clock")
 def get_clock_data():
     seconds_since_big_bang = Decimal('466576408532613321.5304043206646')
-    reference_time = datetime.datetime(2020, 12, 31, 23, 59, 59)  # לא כולל tzinfo
-    input_time = datetime.datetime.now()  # גם לא כולל tzinfo (כך אין טעות בהשוואה)
+    reference_time = datetime.datetime(2020, 12, 31, 23, 59, 59, tzinfo=datetime.timezone.utc)
 
-    print(f"SERVER TIME: {input_time}")  # הדפסה לקונסולה במקום לקובץ
+    # הגדרת אזור זמן ישראל
+    tz_israel = datetime.timezone(datetime.timedelta(hours=3))
+    input_time = datetime.datetime.now(tz=tz_israel)
 
-    second_multiplier = Decimal('285738202.060366731702559') / Decimal(299792458)
+    # כתיבת הזמן לקובץ זמני בלוג
+    with open("/tmp/server_time.log", "a") as f:
+        f.write(f"SERVER TIME: {input_time}\n")
+
+    second_multiplier = Decimal(285738202.060366731702559) / Decimal(299792458)
 
     difference_in_seconds = (input_time - reference_time).total_seconds()
     total_seconds = Decimal(difference_in_seconds) + seconds_since_big_bang
